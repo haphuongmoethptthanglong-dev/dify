@@ -1,0 +1,11 @@
+-- Flyway baseline migration for the existing Dify database schema.
+-- This is intentionally empty. The schema was created and is managed by
+-- the Python API's Alembic migrations.
+--
+-- Flyway configuration:
+--   baseline-on-migrate: true
+--   baseline-version: 0
+--
+-- This ensures Flyway recognizes the existing schema without attempting
+-- to recreate any tables. All future Java-specific migrations should be
+-- numbered V1__description.sql and higher.
