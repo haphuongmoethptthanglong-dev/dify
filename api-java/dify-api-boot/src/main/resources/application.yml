@@ -53,8 +53,15 @@ spring:
       fail-on-unknown-properties: false
 
 dify:
+  edition: ${EDITION:SELF_HOSTED}
+  version: ${DIFY_VERSION:0.15.3}
+  check-update-url: ${CHECK_UPDATE_URL:https://updates.dify.ai/api/v1/updates}
+  init-password: ${INIT_PASSWORD:}
   security:
     secret-key: ${SECRET_KEY:your-secret-key}
+  features:
+    can-replace-logo: ${CAN_REPLACE_LOGO:false}
+    model-load-balancing-enabled: ${MODEL_LB_ENABLED:false}
   cors:
     console-origins: ${CONSOLE_CORS_ALLOW_ORIGINS:*}
     web-origins: ${WEB_API_CORS_ALLOW_ORIGINS:*}

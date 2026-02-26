@@ -4,9 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * JPA entity mapping to the existing {@code tenant_account_joins} table.
@@ -27,13 +30,13 @@ public class TenantAccountJoin {
 
     @Id
     @Column(columnDefinition = "uuid")
-    private String id;
+    private UUID id;
 
     @Column(name = "tenant_id", nullable = false, columnDefinition = "uuid")
-    private String tenantId;
+    private UUID tenantId;
 
     @Column(name = "account_id", nullable = false, columnDefinition = "uuid")
-    private String accountId;
+    private UUID accountId;
 
     @Column(name = "current", nullable = false)
     private boolean current = false;
@@ -42,7 +45,7 @@ public class TenantAccountJoin {
     private String role = "normal";
 
     @Column(name = "invited_by", columnDefinition = "uuid")
-    private String invitedBy;
+    private UUID invitedBy;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -50,30 +53,49 @@ public class TenantAccountJoin {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) createdAt = now;
+        if (updatedAt == null) updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     protected TenantAccountJoin() {
     }
 
-    public String getId() {
+    public TenantAccountJoin(UUID id, UUID tenantId, UUID accountId, String role) {
+        this.id = id;
+        this.tenantId = tenantId;
+        this.accountId = accountId;
+        this.role = role;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getTenantId() {
+    public UUID getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(UUID tenantId) {
         this.tenantId = tenantId;
     }
 
-    public String getAccountId() {
+    public UUID getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(String accountId) {
+    public void setAccountId(UUID accountId) {
         this.accountId = accountId;
     }
 
@@ -97,11 +119,11 @@ public class TenantAccountJoin {
         return TenantAccountRole.fromValue(role);
     }
 
-    public String getInvitedBy() {
+    public UUID getInvitedBy() {
         return invitedBy;
     }
 
-    public void setInvitedBy(String invitedBy) {
+    public void setInvitedBy(UUID invitedBy) {
         this.invitedBy = invitedBy;
     }
 

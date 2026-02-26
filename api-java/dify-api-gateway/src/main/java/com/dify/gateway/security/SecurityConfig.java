@@ -56,11 +56,35 @@ public class SecurityConfig {
     }
 
     /**
+     * Console bootstrap endpoints — unauthenticated by design.
+     *
+     * These endpoints must be accessible before any admin account exists
+     * (first-time setup, health check, version info, init validation).
+     * Matches Python's unauthenticated root controllers in controllers/console/.
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain consoleBootstrapFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(
+                        "/console/api/setup",
+                        "/console/api/ping",
+                        "/console/api/version",
+                        "/console/api/init",
+                        "/console/api/system-features")
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+
+    /**
      * Console API filter chain — JWT auth with user_id claim.
      * Matches Python blueprint 'console' at /console/api/**.
      */
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain consoleFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/console/api/**")
@@ -85,7 +109,7 @@ public class SecurityConfig {
      * TODO: Implement ApiTokenAuthenticationFilter when migrating service API slice.
      */
     @Bean
-    @Order(3)
+    @Order(4)
     public SecurityFilterChain serviceApiFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/v1/**")
@@ -108,7 +132,7 @@ public class SecurityConfig {
      * TODO: Implement WebPassportAuthenticationFilter when migrating web API slice.
      */
     @Bean
-    @Order(4)
+    @Order(5)
     public SecurityFilterChain webApiFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/**")
@@ -129,7 +153,7 @@ public class SecurityConfig {
      * Default filter chain — catch-all for other paths (files, inner_api, mcp, trigger).
      */
     @Bean
-    @Order(5)
+    @Order(6)
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())

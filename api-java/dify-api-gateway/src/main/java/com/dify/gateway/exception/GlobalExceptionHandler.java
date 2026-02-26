@@ -5,6 +5,8 @@ import com.dify.common.exception.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -34,6 +36,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(NoResourceFoundException ex) {
         var error = new ErrorResponse("not_found", "The requested resource was not found.", 404);
         return ResponseEntity.status(404).body(error);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParam(MissingServletRequestParameterException ex) {
+        var error = new ErrorResponse("bad_request", ex.getMessage(), 400);
+        return ResponseEntity.status(400).body(error);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestBody(HttpMessageNotReadableException ex) {
+        var error = new ErrorResponse("bad_request", "Invalid request body.", 400);
+        return ResponseEntity.status(400).body(error);
     }
 
     @ExceptionHandler(Exception.class)

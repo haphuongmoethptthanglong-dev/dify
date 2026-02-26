@@ -4,9 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * JPA entity mapping to the existing {@code accounts} table.
@@ -22,7 +25,7 @@ public class Account {
 
     @Id
     @Column(columnDefinition = "uuid")
-    private String id;
+    private UUID id;
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -69,6 +72,18 @@ public class Account {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) createdAt = now;
+        if (updatedAt == null) updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     /**
      * Transient role field — populated at runtime from TenantAccountJoin,
      * matching Python's {@code Account.role} dataclass field.
@@ -86,11 +101,21 @@ public class Account {
     protected Account() {
     }
 
-    public String getId() {
+    /**
+     * Create a new Account for programmatic construction (e.g., first-time setup).
+     * JPA still uses the no-arg constructor for hydration.
+     */
+    public Account(UUID id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -230,7 +255,7 @@ public class Account {
         this.currentTenant = currentTenant;
     }
 
-    public String getCurrentTenantId() {
+    public UUID getCurrentTenantId() {
         return currentTenant != null ? currentTenant.getId() : null;
     }
 
