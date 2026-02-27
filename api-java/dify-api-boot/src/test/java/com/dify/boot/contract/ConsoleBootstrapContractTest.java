@@ -9,13 +9,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Contract tests for the 4 console bootstrap endpoints (Slice 1).
@@ -33,10 +31,8 @@ import org.springframework.test.context.ActiveProfiles;
  *   <li>POST /console/api/init</li>
  * </ul>
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ConsoleBootstrapContractTest {
+class ConsoleBootstrapContractTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
