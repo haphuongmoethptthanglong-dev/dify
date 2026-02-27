@@ -18,6 +18,10 @@
             <groupId>com.dify</groupId>
             <artifactId>dify-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

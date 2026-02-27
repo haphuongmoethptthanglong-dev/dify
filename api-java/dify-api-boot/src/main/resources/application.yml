@@ -3,7 +3,7 @@ spring:
     name: dify-api
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:dify}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:dify}?stringtype=unspecified
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
@@ -62,6 +62,44 @@ dify:
   features:
     can-replace-logo: ${CAN_REPLACE_LOGO:false}
     model-load-balancing-enabled: ${MODEL_LB_ENABLED:false}
+    dataset-operator-enabled: ${DATASET_OPERATOR_ENABLED:false}
+    education-enabled: ${EDUCATION_ENABLED:false}
+    enable-marketplace: ${MARKETPLACE_ENABLED:false}
+    enable-trial-app: ${ENABLE_TRIAL_APP:false}
+    enable-explore-banner: ${ENABLE_EXPLORE_BANNER:false}
+  login:
+    enable-email-code-login: ${ENABLE_EMAIL_CODE_LOGIN:false}
+    enable-email-password-login: ${ENABLE_EMAIL_PASSWORD_LOGIN:true}
+    enable-social-oauth-login: ${ENABLE_SOCIAL_OAUTH_LOGIN:false}
+    allow-register: ${ALLOW_REGISTER:false}
+    allow-create-workspace: ${ALLOW_CREATE_WORKSPACE:false}
+  mail:
+    type: ${MAIL_TYPE:}
+  enterprise:
+    enabled: ${ENTERPRISE_ENABLED:false}
+  billing:
+    enabled: ${BILLING_ENABLED:false}
+  plugin:
+    max-package-size: ${PLUGIN_MAX_PACKAGE_SIZE:10485760}
+  hosted:
+    openai:
+      paid-enabled: ${HOSTED_OPENAI_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_OPENAI_TRIAL_ENABLED:false}
+    anthropic:
+      paid-enabled: ${HOSTED_ANTHROPIC_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_ANTHROPIC_TRIAL_ENABLED:false}
+    gemini:
+      paid-enabled: ${HOSTED_GEMINI_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_GEMINI_TRIAL_ENABLED:false}
+    xai:
+      paid-enabled: ${HOSTED_XAI_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_XAI_TRIAL_ENABLED:false}
+    deepseek:
+      paid-enabled: ${HOSTED_DEEPSEEK_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_DEEPSEEK_TRIAL_ENABLED:false}
+    tongyi:
+      paid-enabled: ${HOSTED_TONGYI_PAID_ENABLED:false}
+      trial-enabled: ${HOSTED_TONGYI_TRIAL_ENABLED:false}
   cors:
     console-origins: ${CONSOLE_CORS_ALLOW_ORIGINS:*}
     web-origins: ${WEB_API_CORS_ALLOW_ORIGINS:*}

@@ -3,8 +3,12 @@ package com.dify.iam.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
+import org.springframework.data.domain.Persistable;
 
 /**
  * JPA entity mapping to the existing {@code dify_setups} table.
@@ -15,7 +19,10 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "dify_setups")
-public class DifySetup {
+public class DifySetup implements Persistable<String> {
+
+    @Transient
+    private boolean isNew = true;
 
     @Id
     @Column(length = 255, nullable = false)
@@ -23,6 +30,26 @@ public class DifySetup {
 
     @Column(name = "setup_at", nullable = false)
     private LocalDateTime setupAt;
+
+    @PrePersist
+    protected void onPersist() {
+        isNew = false;
+    }
+
+    @PostLoad
+    void onLoad() {
+        isNew = false;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    @Override
+    public String getId() {
+        return version;
+    }
 
     protected DifySetup() {
     }

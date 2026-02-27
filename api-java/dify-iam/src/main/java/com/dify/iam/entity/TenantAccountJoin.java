@@ -5,11 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.data.domain.Persistable;
 
 /**
  * JPA entity mapping to the existing {@code tenant_account_joins} table.
@@ -26,7 +29,10 @@ import java.util.UUID;
         uniqueConstraints = {
                 @UniqueConstraint(name = "unique_tenant_account_join", columnNames = {"tenant_id", "account_id"})
         })
-public class TenantAccountJoin {
+public class TenantAccountJoin implements Persistable<UUID> {
+
+    @Transient
+    private boolean isNew = true;
 
     @Id
     @Column(columnDefinition = "uuid")
@@ -55,9 +61,20 @@ public class TenantAccountJoin {
 
     @PrePersist
     protected void onCreate() {
+        isNew = false;
         LocalDateTime now = LocalDateTime.now();
         if (createdAt == null) createdAt = now;
         if (updatedAt == null) updatedAt = now;
+    }
+
+    @PostLoad
+    void onLoad() {
+        isNew = false;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
     @PreUpdate

@@ -4,12 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.data.domain.Persistable;
 
 /**
  * JPA entity mapping to the existing {@code accounts} table.
@@ -17,11 +19,16 @@ import java.util.UUID;
  * Matches Python's {@code Account(UserMixin, TypeBase)} in models/account.py.
  * Read-only during initial migration phase — no schema modifications.
  */
+/**
+ * Implements {@link Persistable} so Spring Data JPA uses {@code persist()} for new
+ * entities with pre-assigned UUIDs (instead of {@code merge()}), ensuring
+ * {@code @PrePersist} lifecycle callbacks fire correctly.
+ */
 @Entity
 @Table(name = "accounts", indexes = {
         @Index(name = "account_email_idx", columnList = "email")
 })
-public class Account {
+public class Account implements Persistable<UUID> {
 
     @Id
     @Column(columnDefinition = "uuid")
@@ -67,22 +74,40 @@ public class Account {
     private LocalDateTime initializedAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
         if (createdAt == null) createdAt = now;
         if (updatedAt == null) updatedAt = now;
+        isNew = false;
+    }
+
+    @PostLoad
+    protected void onLoad() {
+        isNew = false;
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    /**
+     * Tracks whether this entity is new (not yet persisted).
+     * Set to false after load or persist.
+     */
+    @Transient
+    private boolean isNew = true;
 
     /**
      * Transient role field — populated at runtime from TenantAccountJoin,

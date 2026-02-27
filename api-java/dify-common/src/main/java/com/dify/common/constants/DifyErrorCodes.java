@@ -21,4 +21,5 @@ public final class DifyErrorCodes {
     public static final String NOT_SETUP = "not_setup";
     public static final String NOT_INIT_VALIDATED = "not_init_validated";
     public static final String INIT_VALIDATE_FAILED = "init_validate_failed";
+    public static final String ACCOUNT_NOT_INITIALIZED = "account_not_initialized";
 }

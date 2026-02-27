@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:172.19.0.5}:${DB_PORT:5432}/${DB_DATABASE:dify}
+    url: jdbc:postgresql://${DB_HOST:172.19.0.2}:${DB_PORT:5432}/${DB_DATABASE:dify}?stringtype=unspecified
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:difyai123456}
 
@@ -17,7 +17,7 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:172.19.0.3}
+      host: ${REDIS_HOST:172.19.0.8}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:difyai123456}
 
@@ -38,6 +38,44 @@ dify:
   features:
     can-replace-logo: false
     model-load-balancing-enabled: false
+    dataset-operator-enabled: false
+    education-enabled: false
+    enable-marketplace: false
+    enable-trial-app: false
+    enable-explore-banner: false
+  login:
+    enable-email-code-login: false
+    enable-email-password-login: true
+    enable-social-oauth-login: false
+    allow-register: false
+    allow-create-workspace: false
+  mail:
+    type: ""
+  enterprise:
+    enabled: false
+  billing:
+    enabled: false
+  plugin:
+    max-package-size: 10485760
+  hosted:
+    openai:
+      paid-enabled: false
+      trial-enabled: false
+    anthropic:
+      paid-enabled: false
+      trial-enabled: false
+    gemini:
+      paid-enabled: false
+      trial-enabled: false
+    xai:
+      paid-enabled: false
+      trial-enabled: false
+    deepseek:
+      paid-enabled: false
+      trial-enabled: false
+    tongyi:
+      paid-enabled: false
+      trial-enabled: false
   cors:
     console-origins: "*"
     web-origins: "*"

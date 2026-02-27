@@ -34,10 +34,13 @@ public class SecurityConfig {
 
     private final JwtTokenService jwtTokenService;
     private final ObjectMapper objectMapper;
+    private final OptionalJwtFilter optionalJwtFilter;
 
-    public SecurityConfig(JwtTokenService jwtTokenService, ObjectMapper objectMapper) {
+    public SecurityConfig(JwtTokenService jwtTokenService, ObjectMapper objectMapper,
+                          OptionalJwtFilter optionalJwtFilter) {
         this.jwtTokenService = jwtTokenService;
         this.objectMapper = objectMapper;
+        this.optionalJwtFilter = optionalJwtFilter;
     }
 
     /**
@@ -61,6 +64,9 @@ public class SecurityConfig {
      * These endpoints must be accessible before any admin account exists
      * (first-time setup, health check, version info, init validation).
      * Matches Python's unauthenticated root controllers in controllers/console/.
+     *
+     * {@code /console/api/system-features} uses {@link OptionalJwtFilter} to detect
+     * authenticated callers without requiring auth (license info in enterprise mode).
      */
     @Bean
     @Order(2)
@@ -75,6 +81,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(optionalJwtFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
