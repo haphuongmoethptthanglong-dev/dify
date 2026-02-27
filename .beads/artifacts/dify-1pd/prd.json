@@ -1,0 +1,136 @@
+{
+	"beadId": "dify-1pd",
+	"prdName": "migrate-test-infra-testcontainers",
+	"tasks": [
+		{
+			"id": "build-1",
+			"category": "build",
+			"description": "Testcontainers BOM is declared in api-java/pom.xml <dependencyManagement> so all child modules inherit consistent versions.",
+			"steps": [
+				"grep -A2 'testcontainers-bom' api-java/pom.xml shows BOM import",
+				"cd api-java && mvn validate passes"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": [],
+				"parallel": true,
+				"conflicts_with": ["build-2"],
+				"files": ["api-java/pom.xml"]
+			}
+		},
+		{
+			"id": "build-2",
+			"category": "build",
+			"description": "dify-api-boot/pom.xml declares org.testcontainers:postgresql and org.testcontainers:junit-jupiter in test scope (versions inherited from BOM).",
+			"steps": [
+				"cd api-java && mvn dependency:tree -pl dify-api-boot | grep testcontainers shows both artifacts",
+				"cd api-java && mvn compile -pl dify-api-boot passes"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": ["build-1"],
+				"parallel": false,
+				"conflicts_with": [],
+				"files": ["api-java/dify-api-boot/pom.xml"]
+			}
+		},
+		{
+			"id": "test-infra-1",
+			"category": "test-infra",
+			"description": "A shared AbstractIntegrationTest class exists with static PostgreSQLContainer (postgres:15-alpine) and GenericContainer (redis:6-alpine), @DynamicPropertySource injecting spring.datasource.* and spring.data.redis.* properties, @SpringBootTest(webEnvironment = RANDOM_PORT) and @ActiveProfiles(\"test\").",
+			"steps": [
+				"cd api-java && mvn test-compile -pl dify-api-boot succeeds",
+				"Class contains @Testcontainers, @Container, @DynamicPropertySource annotations"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": ["build-2"],
+				"parallel": false,
+				"conflicts_with": [],
+				"files": [
+					"api-java/dify-api-boot/src/test/java/com/dify/boot/contract/AbstractIntegrationTest.java"
+				]
+			}
+		},
+		{
+			"id": "config-1",
+			"category": "config",
+			"description": "application-test.yml no longer contains hardcoded 172.x.x.x IPs in connection properties. Non-connection config (logging, JWT secret, Flyway settings, dify app config) is preserved.",
+			"steps": [
+				"! grep -E '172\\.\\d+\\.\\d+\\.\\d+' api-java/dify-api-boot/src/test/resources/application-test.yml exits 0",
+				"File still contains spring.flyway, dify.*, and logging.* sections"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": ["test-infra-1"],
+				"parallel": true,
+				"conflicts_with": ["test-1"],
+				"files": [
+					"api-java/dify-api-boot/src/test/resources/application-test.yml"
+				]
+			}
+		},
+		{
+			"id": "test-1",
+			"category": "test",
+			"description": "Both ConsoleBootstrapContractTest and ConsoleFeatureContractTest extend AbstractIntegrationTest, removing their own @SpringBootTest and @ActiveProfiles annotations (inherited from base).",
+			"steps": [
+				"grep 'extends AbstractIntegrationTest' api-java/dify-api-boot/src/test/java/com/dify/boot/contract/*ContractTest.java matches both files",
+				"cd api-java && mvn test-compile -pl dify-api-boot passes"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": ["test-infra-1", "config-1"],
+				"parallel": false,
+				"conflicts_with": [],
+				"files": [
+					"api-java/dify-api-boot/src/test/java/com/dify/boot/contract/ConsoleBootstrapContractTest.java",
+					"api-java/dify-api-boot/src/test/java/com/dify/boot/contract/ConsoleFeatureContractTest.java"
+				]
+			}
+		},
+		{
+			"id": "verification-1",
+			"category": "verification",
+			"description": "All contract tests pass with Testcontainers-managed containers on a clean environment (no pre-existing Docker network required).",
+			"steps": [
+				"cd api-java && mvn test -pl dify-api-boot exits 0",
+				"Test output shows Testcontainers startup logs (container image pulls / starts)"
+			],
+			"passes": true,
+			"metadata": {
+				"depends_on": ["test-1"],
+				"parallel": false,
+				"conflicts_with": [],
+				"files": []
+			}
+		}
+	],
+	"context": {
+		"patterns": [
+			"Contract tests: api-java/dify-api-boot/src/test/java/com/dify/boot/contract/",
+			"Test config: api-java/dify-api-boot/src/test/resources/application-test.yml",
+			"Maven parent POM: api-java/pom.xml with Spring Boot 3.4.3 parent, Java 21",
+			"Production images: postgres:15-alpine, redis:6-alpine"
+		],
+		"keyFiles": [
+			"api-java/pom.xml",
+			"api-java/dify-api-boot/pom.xml",
+			"api-java/dify-api-boot/src/test/resources/application-test.yml",
+			"docker/docker-compose.yaml"
+		],
+		"nonGoals": [
+			"Adding new test cases",
+			"Changing production Docker Compose files",
+			"Testcontainers for services beyond PostgreSQL and Redis",
+			"CI pipeline configuration changes"
+		]
+	},
+	"beadMetadata": {
+		"depends_on": [],
+		"parallel": true,
+		"conflicts_with": [],
+		"blocks": [],
+		"estimated_hours": 2
+	}
+}

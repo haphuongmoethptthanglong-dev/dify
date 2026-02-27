@@ -1,0 +1,29 @@
+## PRD Task Progress: dify-1pd
+
+### build-1: PASS
+- Added TC BOM to api-java/pom.xml dependencyManagement
+- Commit: (first batch)
+
+### build-2: PASS
+- Added TC postgresql + junit-jupiter deps to dify-api-boot/pom.xml
+- Commit: (first batch)
+
+### test-infra-1: PASS
+- Created AbstractIntegrationTest.java with PostgreSQLContainer + Redis GenericContainer
+- Commit: 24298c2db5
+
+### config-1: PASS
+- Removed hardcoded 172.x IPs from application-test.yml
+- Commit: 9af66b856a
+
+### test-1: PASS
+- Both contract tests extend AbstractIntegrationTest
+- Commit: 891609a330
+
+### verification-1: PASS
+- All 5 tests pass with Testcontainers
+- Fixed: TC 1.20.4 → 2.0.3 (Docker API version compat)
+- Fixed: ddl-auto: create + Flyway disabled (empty baseline migration)
+- Commit: b1b2e73e18
+
+### All 6/6 tasks COMPLETE
