@@ -50,6 +50,7 @@ public class LicenseLimitationModel {
         return (limit - size) >= required;
     }
 
+    @JsonIgnore
     public boolean isAvailable() {
         return isAvailable(1);
     }

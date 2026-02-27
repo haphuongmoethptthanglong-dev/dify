@@ -23,13 +23,13 @@ public class SystemFeatureModel {
     private boolean enableSocialOauthLogin;
 
     @JsonProperty("is_allow_register")
-    private boolean isAllowRegister;
+    private boolean allowRegister;
 
     @JsonProperty("is_allow_create_workspace")
-    private boolean isAllowCreateWorkspace;
+    private boolean allowCreateWorkspace;
 
     @JsonProperty("is_email_setup")
-    private boolean isEmailSetup;
+    private boolean emailSetup;
     private LicenseModel license;
     private BrandingModel branding;
     private WebAppAuthModel webappAuth;
@@ -48,9 +48,9 @@ public class SystemFeatureModel {
         this.enableEmailCodeLogin = false;
         this.enableEmailPasswordLogin = true;
         this.enableSocialOauthLogin = false;
-        this.isAllowRegister = false;
-        this.isAllowCreateWorkspace = false;
-        this.isEmailSetup = false;
+        this.allowRegister = false;
+        this.allowCreateWorkspace = false;
+        this.emailSetup = false;
         this.license = new LicenseModel();
         this.branding = new BrandingModel();
         this.webappAuth = new WebAppAuthModel();
@@ -119,27 +119,27 @@ public class SystemFeatureModel {
     }
 
     public boolean isAllowRegister() {
-        return isAllowRegister;
+        return allowRegister;
     }
 
     public void setAllowRegister(boolean allowRegister) {
-        isAllowRegister = allowRegister;
+        this.allowRegister = allowRegister;
     }
 
     public boolean isAllowCreateWorkspace() {
-        return isAllowCreateWorkspace;
+        return allowCreateWorkspace;
     }
 
     public void setAllowCreateWorkspace(boolean allowCreateWorkspace) {
-        isAllowCreateWorkspace = allowCreateWorkspace;
+        this.allowCreateWorkspace = allowCreateWorkspace;
     }
 
     public boolean isEmailSetup() {
-        return isEmailSetup;
+        return emailSetup;
     }
 
     public void setEmailSetup(boolean emailSetup) {
-        isEmailSetup = emailSetup;
+        this.emailSetup = emailSetup;
     }
 
     public LicenseModel getLicense() {

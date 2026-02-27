@@ -26,7 +26,7 @@ public class FeatureModel {
     private LicenseLimitationModel workspaceMembers;
 
     @JsonProperty("is_allow_transfer_workspace")
-    private boolean isAllowTransferWorkspace;
+    private boolean allowTransferWorkspace;
     private QuotaModel triggerEvent;
     private QuotaModel apiRateLimit;
     private boolean humanInputEmailDeliveryEnabled;
@@ -48,7 +48,7 @@ public class FeatureModel {
         this.datasetOperatorEnabled = false;
         this.webappCopyrightEnabled = false;
         this.workspaceMembers = new LicenseLimitationModel(false, 0, 0);
-        this.isAllowTransferWorkspace = true;
+        this.allowTransferWorkspace = true;
         this.triggerEvent = new QuotaModel(0, 3000, 0);
         this.apiRateLimit = new QuotaModel(0, 5000, 0);
         this.humanInputEmailDeliveryEnabled = false;
@@ -169,11 +169,11 @@ public class FeatureModel {
     }
 
     public boolean isAllowTransferWorkspace() {
-        return isAllowTransferWorkspace;
+        return allowTransferWorkspace;
     }
 
     public void setAllowTransferWorkspace(boolean allowTransferWorkspace) {
-        isAllowTransferWorkspace = allowTransferWorkspace;
+        this.allowTransferWorkspace = allowTransferWorkspace;
     }
 
     public QuotaModel getTriggerEvent() {
