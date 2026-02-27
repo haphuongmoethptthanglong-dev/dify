@@ -5,9 +5,11 @@
 **Commit:** ac1e1d34e1 (latest: post-Slice 2 review commit)
 
 ## Context
+
 Port-to-Java project. 2 slices done (Console Bootstrap, Feature Flags). Next task before Slice 3A (Core Auth) is migrating test infra from hardcoded Docker IPs to Testcontainers for portable, CI-friendly tests.
 
 ## Current State (surveyed)
+
 - **2 test files** exist:
   - `api-java/dify-api-boot/src/test/java/com/dify/boot/contract/ConsoleBootstrapContractTest.java`
   - `api-java/dify-api-boot/src/test/java/com/dify/boot/contract/ConsoleFeatureContractTest.java`
@@ -22,9 +24,11 @@ Port-to-Java project. 2 slices done (Console Bootstrap, Feature Flags). Next tas
 - `spring-boot-starter-test` is the only test dependency in `dify-api-boot/pom.xml`
 
 ## Done
+
 - Nothing yet for this task — this is the starting handoff
 
 ## Remaining (Implementation Steps)
+
 1. **Add Testcontainers BOM + dependencies to parent POM** (`api-java/pom.xml`):
    - `testcontainers-bom` in `<dependencyManagement>`
    - `org.testcontainers:postgresql` (test scope)
@@ -54,6 +58,7 @@ Port-to-Java project. 2 slices done (Console Bootstrap, Feature Flags). Next tas
 6. **Verify**: Run `mvn test -pl dify-api-boot` — both tests must pass with TC containers
 
 ## Key Decisions to Make
+
 - **Redis container**: Use `GenericContainer("redis:7")` (simpler) or dedicated `RedisContainer`?
   - Recommendation: `GenericContainer` — fewer dependencies, sufficient for integration tests
 - **Container lifecycle**: `static` containers shared across all tests (faster) vs per-test (isolated)?
@@ -61,11 +66,13 @@ Port-to-Java project. 2 slices done (Console Bootstrap, Feature Flags). Next tas
 - **Image versions**: Match production Docker Compose (`postgres:15`, `redis:7`)
 
 ## Risks
+
 - R16 (from plan): Docker IP hardcoding already broke once — this task directly mitigates it
 - Testcontainers requires Docker daemon running on test machine
 - Flyway migrations must work on clean TC database (should be fine — they run on app startup)
 
 ## Files to Touch
+
 - `api-java/pom.xml` — add TC BOM
 - `api-java/dify-api-boot/pom.xml` — add TC test deps
 - `api-java/dify-api-boot/src/test/java/com/dify/boot/contract/AbstractIntegrationTest.java` — NEW base class
@@ -74,6 +81,7 @@ Port-to-Java project. 2 slices done (Console Bootstrap, Feature Flags). Next tas
 - `api-java/dify-api-boot/src/test/resources/application-test.yml` — remove hardcoded IPs
 
 ## Resume Instructions
+
 1. Read this handoff
 2. Read plan file `notes/plan26-02-2026.md` Section 1F (test strategy) and Section 2B (test infra prereq)
 3. Implement steps 1-6 above

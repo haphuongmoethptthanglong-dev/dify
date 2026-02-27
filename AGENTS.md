@@ -43,3 +43,6 @@ The codebase is split into:
 - Backend architecture adheres to DDD and Clean Architecture principles.
 - Async work runs through Celery with Redis as the broker.
 - Frontend user-facing strings must use `web/i18n/en-US/`; avoid hardcoded text.
+
+<!-- This section is auto-maintained by lore (https://github.com/BYK/opencode-lore) -->
+<!-- End lore-managed section -->
