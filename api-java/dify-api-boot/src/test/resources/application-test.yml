@@ -1,8 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:172.19.0.8}:${DB_PORT:5432}/${DB_DATABASE:dify}?stringtype=unspecified
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:difyai123456}
+  # datasource and redis connection properties are injected by
+  # AbstractIntegrationTest via @DynamicPropertySource (Testcontainers)
 
   jpa:
     hibernate:
@@ -14,12 +12,6 @@ spring:
     baseline-on-migrate: true
     baseline-version: "0"
     locations: classpath:db/migration
-
-  data:
-    redis:
-      host: ${REDIS_HOST:172.19.0.2}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:difyai123456}
 
   jackson:
     property-naming-strategy: SNAKE_CASE
